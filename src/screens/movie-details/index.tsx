@@ -8,7 +8,7 @@ const MovieDetails = (props: Props) => {
   return (
     <View style={{ height: 300 }}>
       <HeroBackground>
-      <View style={{ flex: 1, justifyContent: "flex-end" }}>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
           <Text
             style={{
               fontSize: 24,
