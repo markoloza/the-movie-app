@@ -4,12 +4,13 @@ import { LinearGradient } from "expo-linear-gradient";
 
 interface HeroBackgroundProps {
   children: any;
+  source: string;
 }
 
 const HeroBackground = (props: HeroBackgroundProps) => {
   return (
     <ImageBackground
-      source={require("../../../assets/moc-image.jpeg")}
+      source={{ uri: props.source }}
       resizeMode="cover"
       style={styles.background}
     >
@@ -27,11 +28,10 @@ export default HeroBackground;
 
 const styles = StyleSheet.create({
   background: {
-    flex: 1,
-    // justifyContent: "flex-end",
+    height: 300,
   },
   gradient: {
-    padding: 10,
     flex: 1,
+    padding: 15,
   },
 });

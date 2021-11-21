@@ -11,7 +11,8 @@ export default function RootStack({}) {
   return (
     <Stack.Navigator
       screenOptions={{
-        header: (props) => <Header {...props} />,
+        contentStyle: { backgroundColor: "#FFF" },
+        header: (props: any) => <Header {...props} />,
       }}
     >
       <Stack.Screen name="MovieSearch" component={MovieSearch} />

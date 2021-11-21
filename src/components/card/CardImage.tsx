@@ -1,13 +1,17 @@
 import React from "react";
 import { StyleSheet, Image } from "react-native";
 
-interface Props {}
+interface Props {
+  source: string;
+}
 
 const CardImage = (props: Props) => {
   return (
     <Image
       style={styles.coverImage}
-      source={require("../../../assets/moc-image.jpeg")}
+      source={{
+        uri: props.source,
+      }}
     />
   );
 };

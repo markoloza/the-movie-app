@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
+import {primary} from "../../styles/colors"
 
 interface Props {
   navigation: any;
@@ -30,13 +31,12 @@ export default Header;
 
 const styles = StyleSheet.create({
   safeZone: {
-    backgroundColor: "#0B253F",
+    backgroundColor: primary.brand,
   },
   headerContainer: {
     height: 80,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#0B253F",
   },
   backButton: {
     position: "absolute",
