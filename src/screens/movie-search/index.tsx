@@ -1,22 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, View, FlatList } from "react-native";
+import React, { useEffect, useMemo } from "react";
+import { FlatList } from "react-native";
 import { NavigationStackProp } from "react-navigation-stack";
-import { CardContainer, CardImage } from "../../components/card";
-import { SearchInputContainer, SearchInput } from "../../components/search";
-import IconButton from "../../components/buttons/IconButton";
-import Container from "../../components/containers/Container";
+import {
+  getPopularMovies,
+  getSearchedMovies,
+  incrementPage,
+  searchMovieWithQuery,
+  clearSearch,
+} from "../../redux/moviesSlice";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { MaterialIcons } from "@expo/vector-icons";
-import axios from "axios";
+import debounce from "lodash/debounce";
+
+import { CardContainer, CardImage } from "../../components/card";
+import Container from "../../components/containers/Container";
 import DefaultLoader from "../../components/loaders/DefaultLoader";
+import IconButton from "../../components/buttons/IconButton";
+import { SearchInputContainer, SearchInput } from "../../components/search";
+import { TitleText } from "../../components/text";
 
-const API_KEY = "55f30e0022207ec3098725b3214a5a92";
-
-interface Props {
-  item: any;
+export interface Activity {
+  id: number;
+}
+interface MovieSearchProps {
+  item: {
+    [id: string]: Activity;
+  };
   navigation?: NavigationStackProp<{ navigation: any }>;
 }
 
-const MovieCard = (props: Props) => {
+const MovieCard = (props: MovieSearchProps) => {
   let posterPath = `https://image.tmdb.org/t/p/original/${props.item.poster_path}`;
   return (
     <CardContainer
@@ -31,66 +44,69 @@ const MovieCard = (props: Props) => {
   );
 };
 
-const MovieSearchInput = () => {
+////////////////////////////////////////////////////////////////////////////////////////////////
+const MovieSearchInput = ({}) => {
+  const dispatch = useAppDispatch();
+  const { searchQuery, page } = useAppSelector((state) => state.movies);
+
+  useEffect(() => {
+    if (searchQuery.length > 2) {
+      dispatch(getSearchedMovies({ searchQuery, page }));
+    } else {
+      dispatch(clearSearch());
+    }
+  }, [searchQuery, page]);
+
+  const changeHandler = (event: any) => {
+    dispatch(searchMovieWithQuery(event));
+  };
+  const debouncedChangeHandler = useMemo(
+    () => debounce(changeHandler, 500),
+    []
+  );
+
   return (
     <SearchInputContainer isFocused={true}>
       <MaterialIcons name="search" size={26} color="#0B253F" />
-      <SearchInput></SearchInput>
+      <SearchInput
+        onChangeText={debouncedChangeHandler}
+        onPressIn={() => console.warn("PRESSED")}
+        // value={query}
+        placeholder="Search"
+      ></SearchInput>
       <IconButton icon="close" />
     </SearchInputContainer>
   );
 };
 
-const MovieSearch = (props: { navigation: any }) => {
-  const [popularMovies, setPopularMovies] = useState([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+const MovieSearch = ({ navigation }: MovieSearchProps) => {
+  const dispatch = useAppDispatch();
+  const { popularMovies, page, searchedMovies, loading } = useAppSelector(
+    (state) => state.movies
+  );
 
   useEffect(() => {
-    getMovies();
+    dispatch(getPopularMovies(page));
   }, [page]);
-
-  const getMovies = async () => {
-    axios
-      .get(
-        `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`
-      )
-      .then(function (response) {
-        console.log(response);
-        setPopularMovies([...popularMovies, ...response.data.results]);
-        setLoading(false);
-      })
-      .catch(function (error) {
-        console.log(error);
-      })
-      .then(function () {});
-  };
-
-  const loadMoreData = () => {
-    setPage((prev) => prev + 1);
-  };
-
-  if (loading) {
-    return <DefaultLoader />;
-  }
 
   return (
     <Container>
       <MovieSearchInput />
       <FlatList
-        initialNumToRender={5}
-        maxToRenderPerBatch={10}
+        ListFooterComponent={loading && <DefaultLoader />}
+        ListHeaderComponent={() => <TitleText>What’s popular</TitleText>}
         showsHorizontalScrollIndicator={true}
-        data={popularMovies}
+        data={searchedMovies}
         renderItem={(item) => (
-          <MovieCard navigation={props.navigation} item={item.item} />
+          <MovieCard navigation={navigation} item={item.item} />
         )}
         keyExtractor={(item, index) => index.toString()}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0}
         onEndReached={() => {
-          loadMoreData();
+          dispatch(incrementPage());
         }}
         numColumns={3}
+        maxToRenderPerBatch={25}
       />
     </Container>
   );

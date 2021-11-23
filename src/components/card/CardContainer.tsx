@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Image, TouchableOpacity } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 interface Props {
   onPress: any;
@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginVertical: 15,
     borderRadius: 10,
+    backgroundColor: "#eee",
     overflow: "hidden",
   },
 });

@@ -1,38 +1,22 @@
-import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-  Dimensions,
-  TouchableOpacity,
-  Text,
-  ActivityIndicator,
-} from "react-native";
+import React, { useEffect } from "react";
+import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
 import { TitleText, BodyText } from "../../components/text";
-
 import { primary } from "../../styles/colors";
-import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { incremented, decremented } from "../../redux/counterSlice";
+import { getMovie } from "../../redux/movieDetailsSlice";
 
 import HeroBackground from "../../components/hero/HeroBackground";
 import Container from "../../components/containers/Container";
 import DefaultLoader from "../../components/loaders/DefaultLoader";
 
-interface Props {
+interface MovieDetailsProps {
   route: any;
 }
 
-const CastSection = (props: { cast: any[] }) => {
+const CastSection = ({ cast }: { cast: any[] }) => {
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        flexWrap: "wrap",
-        marginTop: 20,
-      }}
-    >
-      {props.cast.map((item, index) => {
+    <View style={styles.castSectionContainer}>
+      {cast.map((item, index) => {
         return (
           <View
             key={index.toString()}
@@ -51,73 +35,49 @@ const CastSection = (props: { cast: any[] }) => {
   );
 };
 
-const MovieDetails = (props: Props) => {
-  const { id } = props.route.params;
+const MovieDetails = ({ route }: MovieDetailsProps) => {
+  const dispatch = useAppDispatch();
+  const { details, loading } = useAppSelector((state) => state.movieDetails);
 
-  const [movieDetails, setMovieDetails] = useState({});
-  const [cast, setCast] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { id } = route.params;
 
   useEffect(() => {
-    getMovie();
-  }, [id]);
-
-  const filterMainCastAndDirector = (data: { cast: any; crew: any }) => {
-    const allCastAndCrew = [...data.cast, ...data.crew];
-
-    // const filterdCastAndCrew = allCastAndCrew.filter((item) => {
-    //   return item.known_for_department === "Directing";
-    // });
-    setCast(allCastAndCrew);
-  };
-
-  const getMovie = async () => {
-    try {
-      const [firstResponse, secondResponse] = await Promise.all([
-        axios.get(
-          `https://api.themoviedb.org/3/movie/${id}?api_key=55f30e0022207ec3098725b3214a5a92&language=en-US`
-        ),
-        axios.get(
-          `https://api.themoviedb.org/3/movie/${id}/credits?api_key=55f30e0022207ec3098725b3214a5a92&language=en-US`
-        ),
-      ]);
-
-      setMovieDetails(firstResponse.data);
-      filterMainCastAndDirector(secondResponse.data);
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  let coverImage = `https://image.tmdb.org/t/p/original/${movieDetails.poster_path}`;
+    dispatch(getMovie(id));
+  }, []);
 
   if (loading) {
     return <DefaultLoader />;
   }
+
+  let coverImage = `https://image.tmdb.org/t/p/original/${details.movieDetails.poster_path}`;
+
   return (
     <ScrollView>
       <HeroBackground source={coverImage}>
         <View style={styles.heroOverlay}>
-          <TitleText style={styles.overlayText}>{movieDetails.title}</TitleText>
+          <TitleText style={styles.overlayText}>
+            {details.movieDetails.title}
+          </TitleText>
           <BodyText style={styles.overlayText}>
-            {new Date(movieDetails.release_date).toLocaleDateString()}
+            {new Date(details.movieDetails.release_date).toLocaleDateString()}
           </BodyText>
           <View style={{ flexDirection: "row" }}>
-            {movieDetails.genres.map((item: { name: string }, index: any) => {
-              return (
-                <BodyText key={index.toString()} style={styles.overlayText}>
-                  {item.name + "  "}
-                </BodyText>
-              );
-            })}
+            {details.movieDetails.genres.map(
+              (item: { name: string }, index: any) => {
+                return (
+                  <BodyText key={index.toString()} style={styles.overlayText}>
+                    {item.name + "  "}
+                  </BodyText>
+                );
+              }
+            )}
           </View>
         </View>
       </HeroBackground>
       <Container>
         <TitleText>Overview</TitleText>
-        <BodyText>{movieDetails.overview}</BodyText>
-        <CastSection cast={cast} />
+        <BodyText>{details.movieDetails.overview}</BodyText>
+        <CastSection cast={details.cast.cast} />
       </Container>
     </ScrollView>
   );
@@ -135,5 +95,10 @@ const styles = StyleSheet.create({
   },
   textBold: {
     fontWeight: "bold",
+  },
+  castSectionContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginTop: 20,
   },
 });

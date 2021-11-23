@@ -1,10 +1,28 @@
 import React from "react";
 import { StyleSheet, TextInput } from "react-native";
 
-interface Props {}
+interface SearchInputProps {
+  onChangeText: any;
+  // value: string;
+  placeholder: string;
+  onPressIn: () => void;
+}
 
-const SearchInput = (props: Props) => {
-  return <TextInput style={styles.searchInput} placeholder="Search" />;
+const SearchInput = ({
+  onChangeText,
+  // value,
+  placeholder,
+  onPressIn,
+}: SearchInputProps) => {
+  return (
+    <TextInput
+      style={styles.searchInput}
+      placeholder={placeholder}
+      // value={value}
+      onChangeText={onChangeText}
+      onPressIn={onPressIn}
+    />
+  );
 };
 
 export default SearchInput;

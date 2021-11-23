@@ -1,17 +1,20 @@
 import React from "react";
-import { StyleSheet, View, TextInput } from "react-native";
+import { StyleSheet, View } from "react-native";
 import IconButton from "../buttons/IconButton";
 
-interface Props {
+interface SearchContainerProps {
   children: any;
   isFocused: boolean;
 }
 
-const SearchInputContainer = (props: Props) => {
+const SearchInputContainer = ({
+  isFocused,
+  children,
+}: SearchContainerProps) => {
   return (
     <View style={styles.searchInputContainer}>
-      <View style={styles.innerPart}>{props.children}</View>
-      {props.isFocused && <IconButton label="Cancel" />}
+      <View style={styles.innerPart}>{children}</View>
+      {isFocused && <IconButton label="Cancel" />}
     </View>
   );
 };
@@ -22,6 +25,7 @@ const styles = StyleSheet.create({
   searchInputContainer: {
     flexDirection: "row",
     alignItems: "center",
+    marginBottom: 10,
   },
   innerPart: {
     flex: 1,

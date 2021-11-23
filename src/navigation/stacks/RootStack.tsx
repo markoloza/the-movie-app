@@ -19,7 +19,6 @@ export default function RootStack({}) {
       <Stack.Screen
         name="MovieDetails"
         component={MovieDetails}
-        // options={{ title: "Movie Details" }}r
       />
     </Stack.Navigator>
   );

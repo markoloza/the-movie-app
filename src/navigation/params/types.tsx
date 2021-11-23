@@ -1,19 +1,17 @@
 import { RouteProp } from "@react-navigation/native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackNavigationProp } from "react-navigation-stack/lib/typescript/src/vendor/types";
 
 export type NO_PARAMS = undefined;
 
 export type RootStackParamList = {
-  MovieDetails: NO_PARAMS;
+  MovieDetails: { id: string };
   MovieSearch: NO_PARAMS;
   // MovieDetails: IRootRouteProps;
   // MovieSearch: IRootRouteProps;
 };
 
-// export interface IRootRouteProps {
-//   propName: propValue;
-// }
-
-// export type RootStackScreenProps<T extends keyof RootStackParamList> = {
-//   navigation: StackNavigationProp<RootStackParamList, T>;
-//   route: RouteProp<RootStackParamList, T>;
-// };
+export type RootStackScreenProps<T extends keyof RootStackParamList> = {
+  navigation: StackNavigationProp<RootStackParamList, T>;
+  route: RouteProp<RootStackParamList, T>;
+};

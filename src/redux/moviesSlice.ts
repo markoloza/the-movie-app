@@ -1,52 +1,80 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { MoviesSliceTypes } from "./types";
 import axios from "axios";
 
-interface MovieState {
-  value: [];
-}
-
-const intialState: MovieState = {
-  value: [],
-};
-
-interface ThunkAPI {
-  dispatch: Function;
-  getState: Function;
-  extra?: any;
-  requestId: string;
-  signal: AbortSignal;
-}
-
 const API_KEY = "55f30e0022207ec3098725b3214a5a92";
-const PAGE = 1;
 
-export const fetchMovies = createAsyncThunk(
-  "movies/fetchMovies",
-  async (page) => {
+export const getPopularMovies = createAsyncThunk(
+  "movies/getPopularMovies",
+  async (page: number) => {
     const response = await axios.get(
       `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`
     );
-    return response.data.results as MovieState;
+    return response.data.results;
   }
 );
 
+export const getSearchedMovies = createAsyncThunk(
+  "movies/getSearchedMovies",
+  async (params) => {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${params.searchQuery}&page=${params.page}&include_adult=false`
+    );
+    return response.data.results;
+  }
+);
+
+const initialState: MoviesSliceTypes = {
+  popularMovies: [],
+  searchQuery: "",
+  searchedMovies: [],
+  loading: true,
+  page: 1,
+};
+
 const movieSlice = createSlice({
-  name: "movie",
-  initialState: { entities: [], loading: "idle" },
+  name: "movies",
+  initialState,
   reducers: {
+    searchMovieWithQuery: (state, action) => {
+      state.searchQuery = action.payload;
+    },
+    clearSearch: (state, action) => {
+      state.searchedMovies = [];
+      state.searchQuery = "";
+    },
+    incrementPage: (state) => {
+      state.page += 1;
+    },
     // standard reducer logic, with auto-generated action types per reducer
   },
   extraReducers: (builder) => {
-    // Add reducers for additional action types here, and handle loading state as needed
-    builder.addCase(fetchMovies.fulfilled, (state, action) => {
-      // Add user to the state array
-      state.entities.push(action.payload);
+    builder.addCase(getPopularMovies.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getPopularMovies.fulfilled, (state, action) => {
+      state.popularMovies = [...state.popularMovies, ...action.payload];
+      state.loading = false;
+    });
+    builder.addCase(getPopularMovies.rejected, (state, action) => {
+      state.loading = false;
+    });
+    builder.addCase(getSearchedMovies.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getSearchedMovies.fulfilled, (state, action) => {
+      state.searchedMovies = [...state.searchedMovies, ...action.payload];
+      state.loading = false;
+    });
+    builder.addCase(getSearchedMovies.rejected, (state, action) => {
+      state.loading = false;
     });
   },
 });
 
-// Later, dispatch the thunk as needed in the app
-// dispatch(fetchUserById(123))
-
-export const {} = movieSlice.actions;
+export const {
+  incrementPage,
+  searchMovieWithQuery,
+  clearSearch,
+} = movieSlice.actions;
 export default movieSlice.reducer;
