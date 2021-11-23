@@ -16,9 +16,9 @@ export const getPopularMovies = createAsyncThunk(
 
 export const getSearchedMovies = createAsyncThunk(
   "movies/getSearchedMovies",
-  async (params) => {
+  async ({ searchQuery, page }: { searchQuery: string; page: number }) => {
     const response = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${params.searchQuery}&page=${params.page}&include_adult=false`
+      `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${searchQuery}&page=${page}&include_adult=false`
     );
     return response.data.results;
   }
@@ -28,6 +28,7 @@ const initialState: MoviesSliceTypes = {
   popularMovies: [],
   searchQuery: "",
   searchedMovies: [],
+  searchMode: false,
   loading: true,
   page: 1,
 };
@@ -39,12 +40,16 @@ const movieSlice = createSlice({
     searchMovieWithQuery: (state, action) => {
       state.searchQuery = action.payload;
     },
-    clearSearch: (state, action) => {
+    clearSearch: (state) => {
       state.searchedMovies = [];
       state.searchQuery = "";
     },
     incrementPage: (state) => {
       state.page += 1;
+    },
+    switchSearchMode: (state, action) => {
+      state.searchMode = action.payload;
+      state.searchQuery = "";
     },
     // standard reducer logic, with auto-generated action types per reducer
   },
@@ -76,5 +81,6 @@ export const {
   incrementPage,
   searchMovieWithQuery,
   clearSearch,
+  switchSearchMode,
 } = movieSlice.actions;
 export default movieSlice.reducer;

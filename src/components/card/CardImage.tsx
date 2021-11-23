@@ -1,16 +1,16 @@
 import React from "react";
 import { StyleSheet, Image } from "react-native";
 
-interface Props {
+interface CardImageProps {
   source: string;
 }
 
-const CardImage = (props: Props) => {
+const CardImage = ({ source }: CardImageProps) => {
   return (
     <Image
       style={styles.coverImage}
       source={{
-        uri: props.source,
+        uri: source,
       }}
     />
   );

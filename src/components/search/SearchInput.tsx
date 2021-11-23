@@ -3,14 +3,14 @@ import { StyleSheet, TextInput } from "react-native";
 
 interface SearchInputProps {
   onChangeText: any;
-  // value: string;
+  value: string;
   placeholder: string;
   onPressIn: () => void;
 }
 
 const SearchInput = ({
   onChangeText,
-  // value,
+  value,
   placeholder,
   onPressIn,
 }: SearchInputProps) => {
@@ -18,7 +18,7 @@ const SearchInput = ({
     <TextInput
       style={styles.searchInput}
       placeholder={placeholder}
-      // value={value}
+      defaultValue={value}
       onChangeText={onChangeText}
       onPressIn={onPressIn}
     />

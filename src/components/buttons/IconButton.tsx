@@ -2,16 +2,17 @@ import React from "react";
 import { StyleSheet, TouchableOpacity, Text } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
-interface Props {
+interface IconButtonProps {
   icon?: any;
   label?: string;
+  onPress?: () => void;
 }
 
-const IconButton = (props: Props) => {
+const IconButton = ({ icon, label, onPress }: IconButtonProps) => {
   return (
-    <TouchableOpacity style={styles.buttonContainer}>
-      <MaterialIcons name={props.icon} size={24} color="#0B253F" />
-      <Text style={styles.buttonLabel}>{props.label}</Text>
+    <TouchableOpacity onPress={onPress} style={styles.buttonContainer}>
+      <MaterialIcons name={icon} size={24} color="#0B253F" />
+      <Text style={styles.buttonLabel}>{label}</Text>
     </TouchableOpacity>
   );
 };
