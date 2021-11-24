@@ -1,9 +1,7 @@
 import React from "react";
 import { ActivityIndicator, View } from "react-native";
 
-interface Props {}
-
-const DefaultLoader = (props: Props) => {
+const DefaultLoader = () => {
   return (
     <View
       style={{ flex: 1, flexDirection: "column", justifyContent: "center" }}

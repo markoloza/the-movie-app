@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo } from "react";
 import {
-  searchMovieWithQuery,
-  getSearchedMovies,
   clearSearch,
+  clearSearchedMovies,
+  getSearchedMovies,
+  setSearchQuery,
   switchSearchMode,
 } from "../../../redux/moviesSlice";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
@@ -11,23 +12,25 @@ import IconButton from "../../../components/buttons/IconButton";
 import { MaterialIcons } from "@expo/vector-icons";
 
 import debounce from "lodash/debounce";
+import { Keyboard } from "react-native";
 
 const MovieSearchInput = () => {
   const dispatch = useAppDispatch();
-  const { searchQuery, page, searchMode } = useAppSelector(
+  const { searchQuery, searchedMoviesPage, searchMode } = useAppSelector(
     (state) => state.movies
   );
 
   useEffect(() => {
     if (searchQuery.length > 2) {
-      dispatch(getSearchedMovies({ searchQuery, page }));
+      dispatch(clearSearchedMovies());
+      dispatch(getSearchedMovies({ searchQuery, searchedMoviesPage: 1 }));
     } else {
-      dispatch(clearSearch());
+      dispatch(clearSearchedMovies());
     }
-  }, [searchQuery, page]);
+  }, [searchQuery]);
 
   const changeHandler = (event: any) => {
-    dispatch(searchMovieWithQuery(event));
+    dispatch(setSearchQuery(event));
   };
   const debouncedChangeHandler = useMemo(
     () => debounce(changeHandler, 500),
@@ -36,17 +39,26 @@ const MovieSearchInput = () => {
 
   return (
     <SearchInputContainer
-      onPress={() => dispatch(switchSearchMode(false))}
+      onPress={() => {
+        dispatch(switchSearchMode(false));
+        Keyboard.dismiss();
+      }}
       isFocused={searchMode}
     >
       <MaterialIcons name="search" size={26} color="#0B253F" />
       <SearchInput
         value={searchQuery}
         onChangeText={debouncedChangeHandler}
-        onPressIn={() => dispatch(switchSearchMode(true))}
+        onFocus={() => {
+          !searchMode && dispatch(switchSearchMode(true));
+        }}
         placeholder="Search"
       ></SearchInput>
-      <IconButton onPress={() => dispatch(clearSearch())} icon="close" />
+      <>
+        {searchMode && (
+          <IconButton onPress={() => dispatch(clearSearch())} icon="close" />
+        )}
+      </>
     </SearchInputContainer>
   );
 };

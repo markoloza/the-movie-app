@@ -1,16 +1,14 @@
 import React from "react";
-import { StyleSheet, Text } from "react-native";
+import { StyleSheet, Text, ViewStyle, StyleProp } from "react-native";
 import { Typography } from "../../styles";
 
-interface Props {
-  children: string;
+interface TitleTextProps {
+  children?: JSX.Element | string;
   style?: any;
 }
 
-const TitleText = (props: Props) => {
-  return (
-    <Text style={[styles.title, { ...props.style }]}>{props.children}</Text>
-  );
+const TitleText = ({ children, style }: TitleTextProps) => {
+  return <Text style={[styles.title, style]}>{children}</Text>;
 };
 
 export default TitleText;

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { TitleText, BodyText } from "../../components/text";
 import { primary } from "../../styles/colors";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
@@ -8,32 +8,12 @@ import { getMovie } from "../../redux/movieDetailsSlice";
 import HeroBackground from "../../components/hero/HeroBackground";
 import Container from "../../components/containers/Container";
 import DefaultLoader from "../../components/loaders/DefaultLoader";
+import CastSection from "./components/CastSection";
+import { RouteProp } from "@react-navigation/native";
 
 interface MovieDetailsProps {
-  route: any;
+  route: RouteProp<{ params: { id: number } }, "params">;
 }
-
-const CastSection = ({ cast }: { cast: any[] }) => {
-  return (
-    <View style={styles.castSectionContainer}>
-      {cast.map((item, index) => {
-        return (
-          <View
-            key={index.toString()}
-            style={{
-              width: (Dimensions.get("window").width - 30) / 3,
-              marginBottom: 20,
-              paddingHorizontal: 5,
-            }}
-          >
-            <BodyText style={styles.textBold}>{item.original_name}</BodyText>
-            <BodyText>{item.known_for_department}</BodyText>
-          </View>
-        );
-      })}
-    </View>
-  );
-};
 
 const MovieDetails = ({ route }: MovieDetailsProps) => {
   const dispatch = useAppDispatch();
@@ -92,13 +72,5 @@ const styles = StyleSheet.create({
   },
   overlayText: {
     color: primary.fontColorLight,
-  },
-  textBold: {
-    fontWeight: "bold",
-  },
-  castSectionContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 20,
   },
 });

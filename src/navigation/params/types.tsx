@@ -7,8 +7,6 @@ export type NO_PARAMS = undefined;
 export type RootStackParamList = {
   MovieDetails: { id: string };
   MovieSearch: NO_PARAMS;
-  // MovieDetails: IRootRouteProps;
-  // MovieSearch: IRootRouteProps;
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> = {

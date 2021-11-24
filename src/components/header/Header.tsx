@@ -1,22 +1,23 @@
 import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import { NavigationStackProp } from "react-navigation-stack";
+import { primary } from "../../styles/colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
-import {primary} from "../../styles/colors"
 
-interface Props {
-  navigation: any;
+interface HeaderProps {
+  navigation?: NavigationStackProp<{ navigation: any }>;
   back: boolean;
 }
 
-const Header = (props: Props) => {
+const Header = ({ navigation, back }: HeaderProps) => {
   return (
     <SafeAreaView style={styles.safeZone} edges={["top", "left", "right"]}>
       <View style={styles.headerContainer}>
-        {props.back && (
+        {back && (
           <TouchableOpacity
             style={styles.backButton}
-            onPress={() => props.navigation.goBack()}
+            onPress={() => navigation.goBack()}
           >
             <AntDesign name="left" size={24} color="#FFFFFF" />
           </TouchableOpacity>

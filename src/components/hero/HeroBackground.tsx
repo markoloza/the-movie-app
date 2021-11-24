@@ -1,16 +1,16 @@
 import React from "react";
-import { StyleSheet, Text, View, ImageBackground } from "react-native";
+import { StyleSheet, ImageBackground } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
 interface HeroBackgroundProps {
-  children: any;
+  children?: JSX.Element | JSX.Element[];
   source: string;
 }
 
-const HeroBackground = (props: HeroBackgroundProps) => {
+const HeroBackground = ({ children, source }: HeroBackgroundProps) => {
   return (
     <ImageBackground
-      source={{ uri: props.source }}
+      source={{ uri: source }}
       resizeMode="cover"
       style={styles.background}
     >
@@ -18,7 +18,7 @@ const HeroBackground = (props: HeroBackgroundProps) => {
         colors={["rgba(0,0,0,0)", "rgba(0,0,0,1)"]}
         style={styles.gradient}
       >
-        {props.children}
+        {children}
       </LinearGradient>
     </ImageBackground>
   );

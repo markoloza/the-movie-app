@@ -1,26 +1,42 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { MoviesSliceTypes } from "./types";
 import axios from "axios";
 
+//Keys and other important data would usually be stored in .env file
 const API_KEY = "55f30e0022207ec3098725b3214a5a92";
+const baseURL = "https://api.themoviedb.org/3/";
+
+const api = axios.create({
+  baseURL: baseURL,
+  headers: { "Content-Type": "application/json" },
+});
 
 export const getPopularMovies = createAsyncThunk(
   "movies/getPopularMovies",
-  async (page: number) => {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`
+  async (page: number, thunkAPI) => {
+    const response = await api.get(
+      `movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`
     );
-    return response.data.results;
+    return response.data;
   }
 );
 
 export const getSearchedMovies = createAsyncThunk(
   "movies/getSearchedMovies",
-  async ({ searchQuery, page }: { searchQuery: string; page: number }) => {
-    const response = await axios.get(
-      `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${searchQuery}&page=${page}&include_adult=false`
+  async (
+    {
+      searchQuery,
+      searchedMoviesPage,
+    }: {
+      searchQuery: string;
+      searchedMoviesPage: number;
+    },
+    thunkAPI
+  ) => {
+    const response = await api.get(
+      `search/movie?api_key=${API_KEY}&language=en-US&query=${searchQuery}&page=${searchedMoviesPage}&include_adult=false`
     );
-    return response.data.results;
+    return response.data;
   }
 );
 
@@ -31,34 +47,45 @@ const initialState: MoviesSliceTypes = {
   searchMode: false,
   loading: true,
   page: 1,
+  searchedMoviesPage: 1,
+  totalPages: 0,
 };
 
 const movieSlice = createSlice({
   name: "movies",
   initialState,
   reducers: {
-    searchMovieWithQuery: (state, action) => {
+    setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;
     },
     clearSearch: (state) => {
       state.searchedMovies = [];
+      state.searchedMoviesPage = 1;
       state.searchQuery = "";
     },
-    incrementPage: (state) => {
-      state.page += 1;
+    clearSearchedMovies: (state) => {
+      state.searchedMovies = [];
+    },
+    incrementPage: (state, action) => {
+      if (action.payload === "search") {
+        state.searchedMoviesPage += 1;
+      } else {
+        state.page += 1;
+      }
     },
     switchSearchMode: (state, action) => {
       state.searchMode = action.payload;
+      state.searchedMoviesPage = 1;
       state.searchQuery = "";
+      state.searchedMovies = [];
     },
-    // standard reducer logic, with auto-generated action types per reducer
   },
   extraReducers: (builder) => {
     builder.addCase(getPopularMovies.pending, (state, action) => {
       state.loading = true;
     });
     builder.addCase(getPopularMovies.fulfilled, (state, action) => {
-      state.popularMovies = [...state.popularMovies, ...action.payload];
+      state.popularMovies = [...state.popularMovies, ...action.payload.results];
       state.loading = false;
     });
     builder.addCase(getPopularMovies.rejected, (state, action) => {
@@ -68,7 +95,11 @@ const movieSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(getSearchedMovies.fulfilled, (state, action) => {
-      state.searchedMovies = [...state.searchedMovies, ...action.payload];
+      state.searchedMovies = [
+        ...state.searchedMovies,
+        ...action.payload.results,
+      ];
+      state.totalPages = action.payload.total_pages;
       state.loading = false;
     });
     builder.addCase(getSearchedMovies.rejected, (state, action) => {
@@ -79,8 +110,9 @@ const movieSlice = createSlice({
 
 export const {
   incrementPage,
-  searchMovieWithQuery,
+  setSearchQuery,
   clearSearch,
+  clearSearchedMovies,
   switchSearchMode,
 } = movieSlice.actions;
 export default movieSlice.reducer;

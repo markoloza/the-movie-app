@@ -1,15 +1,15 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity } from "react-native";
 
-interface Props {
-  onPress: any;
-  children: any;
+interface CardContainerProps {
+  onPress: () => void;
+  children: JSX.Element;
 }
 
-const CardContainer = (props: Props) => {
+const CardContainer = ({ onPress, children }: CardContainerProps) => {
   return (
-    <TouchableOpacity onPress={props.onPress} style={styles.cardContainer}>
-      {props.children}
+    <TouchableOpacity onPress={onPress} style={styles.cardContainer}>
+      {children}
     </TouchableOpacity>
   );
 };

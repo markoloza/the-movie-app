@@ -2,25 +2,25 @@ import React from "react";
 import { StyleSheet, TextInput } from "react-native";
 
 interface SearchInputProps {
-  onChangeText: any;
   value: string;
   placeholder: string;
-  onPressIn: () => void;
+  onFocus: () => void;
+  onChangeText: any;
 }
 
 const SearchInput = ({
   onChangeText,
-  value,
   placeholder,
-  onPressIn,
+  onFocus,
+  value,
 }: SearchInputProps) => {
   return (
     <TextInput
+      onChangeText={onChangeText}
       style={styles.searchInput}
       placeholder={placeholder}
       defaultValue={value}
-      onChangeText={onChangeText}
-      onPressIn={onPressIn}
+      onFocus={onFocus}
     />
   );
 };
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     height: "100%",
-    fontSize: 16,
     borderRadius: 10,
+    fontSize: 16,
   },
 });

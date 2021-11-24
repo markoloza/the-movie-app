@@ -1,12 +1,12 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 
-interface Props {
-  children: any;
+interface ContainerProps {
+  children?: JSX.Element | JSX.Element[];
 }
 
-const Container = (props: Props) => {
-  return <View style={styles.container}>{props.children}</View>;
+const Container = ({ children }: ContainerProps) => {
+  return <View style={styles.container}>{children}</View>;
 };
 
 export default Container;
