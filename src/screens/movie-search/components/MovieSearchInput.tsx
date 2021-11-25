@@ -16,9 +16,7 @@ import { Keyboard } from "react-native";
 
 const MovieSearchInput = () => {
   const dispatch = useAppDispatch();
-  const { searchQuery, searchedMoviesPage, searchMode } = useAppSelector(
-    (state) => state.movies
-  );
+  const { searchQuery, searchMode } = useAppSelector((state) => state.movies);
 
   useEffect(() => {
     if (searchQuery.length > 2) {

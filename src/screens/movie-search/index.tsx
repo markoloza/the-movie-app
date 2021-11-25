@@ -8,9 +8,9 @@ import {
 } from "../../redux/moviesSlice";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 
+import { TitleText, BodyText } from "../../components/text";
 import Container from "../../components/containers/Container";
 import DefaultLoader from "../../components/loaders/DefaultLoader";
-import { TitleText, BodyText } from "../../components/text";
 import MovieSearchInput from "./components/MovieSearchInput";
 import MovieCard from "./components/MovieCard";
 

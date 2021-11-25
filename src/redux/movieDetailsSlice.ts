@@ -1,17 +1,15 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { MovieDetailsSliceTypes } from "./types";
-
-const API_KEY = "55f30e0022207ec3098725b3214a5a92";
+import { api, API_KEY } from "../services/api";
 
 export const getMovie = createAsyncThunk(
   "movies/getMovie",
   async (id: number) => {
     const [firstResponse, secondResponse] = await Promise.all([
-      axios.get(
+      api.get(
         `https://api.themoviedb.org/3/movie/${id}?api_key=${API_KEY}&language=en-US`
       ),
-      axios.get(
+      api.get(
         `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${API_KEY}&language=en-US`
       ),
     ]);
@@ -21,7 +19,6 @@ export const getMovie = createAsyncThunk(
 
 const initialState: MovieDetailsSliceTypes = {
   loading: true,
-  page: 1,
   details: {},
 };
 
@@ -30,14 +27,14 @@ const movieDetailsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(getMovie.pending, (state, action) => {
+    builder.addCase(getMovie.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(getMovie.fulfilled, (state, action) => {
       state.details = { ...action.payload };
       state.loading = false;
     });
-    builder.addCase(getMovie.rejected, (state, action) => {
+    builder.addCase(getMovie.rejected, (state) => {
       state.loading = false;
     });
   },

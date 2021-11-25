@@ -12,6 +12,5 @@ export type MoviesSliceTypes = {
 
 export type MovieDetailsSliceTypes = {
   loading: boolean;
-  page: number;
   details: any;
 };

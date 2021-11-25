@@ -1,19 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { MoviesSliceTypes } from "./types";
-import axios from "axios";
-
-//Keys and other important data would usually be stored in .env file
-const API_KEY = "55f30e0022207ec3098725b3214a5a92";
-const baseURL = "https://api.themoviedb.org/3/";
-
-const api = axios.create({
-  baseURL: baseURL,
-  headers: { "Content-Type": "application/json" },
-});
+import { api, API_KEY } from "../services/api";
 
 export const getPopularMovies = createAsyncThunk(
   "movies/getPopularMovies",
-  async (page: number, thunkAPI) => {
+  async (page: number) => {
     const response = await api.get(
       `movie/popular?api_key=${API_KEY}&language=en-US&page=${page}`
     );
@@ -23,16 +14,13 @@ export const getPopularMovies = createAsyncThunk(
 
 export const getSearchedMovies = createAsyncThunk(
   "movies/getSearchedMovies",
-  async (
-    {
-      searchQuery,
-      searchedMoviesPage,
-    }: {
-      searchQuery: string;
-      searchedMoviesPage: number;
-    },
-    thunkAPI
-  ) => {
+  async ({
+    searchQuery,
+    searchedMoviesPage,
+  }: {
+    searchQuery: string;
+    searchedMoviesPage: number;
+  }) => {
     const response = await api.get(
       `search/movie?api_key=${API_KEY}&language=en-US&query=${searchQuery}&page=${searchedMoviesPage}&include_adult=false`
     );
@@ -65,6 +53,7 @@ const movieSlice = createSlice({
     },
     clearSearchedMovies: (state) => {
       state.searchedMovies = [];
+      state.searchedMoviesPage = 1;
     },
     incrementPage: (state, action) => {
       if (action.payload === "search") {
@@ -81,17 +70,17 @@ const movieSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(getPopularMovies.pending, (state, action) => {
+    builder.addCase(getPopularMovies.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(getPopularMovies.fulfilled, (state, action) => {
       state.popularMovies = [...state.popularMovies, ...action.payload.results];
       state.loading = false;
     });
-    builder.addCase(getPopularMovies.rejected, (state, action) => {
+    builder.addCase(getPopularMovies.rejected, (state) => {
       state.loading = false;
     });
-    builder.addCase(getSearchedMovies.pending, (state, action) => {
+    builder.addCase(getSearchedMovies.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(getSearchedMovies.fulfilled, (state, action) => {
@@ -102,7 +91,7 @@ const movieSlice = createSlice({
       state.totalPages = action.payload.total_pages;
       state.loading = false;
     });
-    builder.addCase(getSearchedMovies.rejected, (state, action) => {
+    builder.addCase(getSearchedMovies.rejected, (state) => {
       state.loading = false;
     });
   },

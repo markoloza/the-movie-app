@@ -41,7 +41,7 @@ const MovieDetails = ({ route }: MovieDetailsProps) => {
           <BodyText style={styles.overlayText}>
             {new Date(details.movieDetails.release_date).toLocaleDateString()}
           </BodyText>
-          <View style={{ flexDirection: "row" }}>
+          <View style={styles.category}>
             {details.movieDetails.genres.map(
               (item: { name: string }, index: any) => {
                 return (
@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
+  category: { flexDirection: "row" },
   overlayText: {
     color: primary.fontColorLight,
   },
