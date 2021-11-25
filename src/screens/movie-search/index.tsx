@@ -71,7 +71,6 @@ const MovieSearch = ({ navigation }: MovieSearchProps) => {
         }}
         onEndReached={() => {
           if (!onEndReachedCalledDuringMomentum) {
-            console.warn("trigerd");
             setOnEndReachedCalledDuringMomentum(true);
             if (searchedMoviesPage === totalPages) return;
             dispatch(incrementPage(searchMode ? "search" : "popular"));
