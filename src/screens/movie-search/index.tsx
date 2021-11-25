@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import { NavigationStackProp } from "react-navigation-stack";
 import {
@@ -25,6 +25,10 @@ interface MovieSearchProps {
 }
 
 const MovieSearch = ({ navigation }: MovieSearchProps) => {
+  const [
+    onEndReachedCalledDuringMomentum,
+    setOnEndReachedCalledDuringMomentum,
+  ] = useState(true);
   const dispatch = useAppDispatch();
   const {
     popularMovies,
@@ -61,10 +65,17 @@ const MovieSearch = ({ navigation }: MovieSearchProps) => {
         )}
         keyExtractor={(item, index) => index.toString()}
         ListFooterComponent={(): any => loading && <DefaultLoader />}
-        onEndReachedThreshold={0}
+        onEndReachedThreshold={0.5}
+        onMomentumScrollBegin={() => {
+          setOnEndReachedCalledDuringMomentum(false);
+        }}
         onEndReached={() => {
-          if (searchedMoviesPage === totalPages) return;
-          dispatch(incrementPage(searchMode ? "search" : "popular"));
+          if (!onEndReachedCalledDuringMomentum) {
+            console.warn("trigerd");
+            setOnEndReachedCalledDuringMomentum(true);
+            if (searchedMoviesPage === totalPages) return;
+            dispatch(incrementPage(searchMode ? "search" : "popular"));
+          }
         }}
       />
     </Container>
