@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, TouchableOpacity, Text } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { primary } from "../../styles/colors";
 
 interface IconButtonProps {
   icon?: any;
@@ -12,7 +11,7 @@ interface IconButtonProps {
 const IconButton = ({ icon, label, onPress }: IconButtonProps) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.buttonContainer}>
-      <MaterialIcons name={icon} size={24} color={primary.brand} />
+      <MaterialIcons name={icon} size={24} color="#0B253F" />
       <Text style={styles.buttonLabel}>{label}</Text>
     </TouchableOpacity>
   );
