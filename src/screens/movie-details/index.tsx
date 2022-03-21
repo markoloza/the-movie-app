@@ -38,6 +38,9 @@ const MovieDetails = ({ route }: MovieDetailsProps) => {
           <TitleText style={styles.overlayText}>
             {details.movieDetails.title}
           </TitleText>
+          <TitleText style={styles.overlayText}>
+            {details.movieDetails.title}
+          </TitleText>
           <BodyText style={styles.overlayText}>
             {new Date(details.movieDetails.release_date).toLocaleDateString()}
           </BodyText>

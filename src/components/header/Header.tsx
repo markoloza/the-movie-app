@@ -23,6 +23,7 @@ const Header = ({ navigation, back }: HeaderProps) => {
           </TouchableOpacity>
         )}
         <Image source={require("../../../assets/logo/logo.png")}></Image>
+        <Image source={require("../../../assets/logo/logo.png")}></Image>
       </View>
     </SafeAreaView>
   );
